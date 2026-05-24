@@ -19,40 +19,42 @@ if (!prices || typeof prices !== 'object') {
   process.exit(1);
 }
 
-// EIA petroleum/pri/gnd duoarea code → our state slug
-// NUS = national US average
-const GAS_DUOAREA_TO_SLUG = {
-  NUS: null,
-  SAL: 'alabama',
-  SAZ: 'arizona',
-  SCA: 'california',
-  SCO: 'colorado',
-  SCT: 'connecticut',
-  SFL: 'florida',
-  SGA: 'georgia',
-  SIL: 'illinois',
-  SIN: 'indiana',
-  SKY: 'kentucky',
-  SLA: 'louisiana',
-  SMA: 'massachusetts',
-  SMD: 'maryland',
-  SMI: 'michigan',
-  SMN: 'minnesota',
-  SMO: 'missouri',
-  SNC: 'north-carolina',
-  SNJ: 'new-jersey',
-  SNV: 'nevada',
-  SNY: 'new-york',
-  SOH: 'ohio',
-  SOK: 'oklahoma',
-  SOR: 'oregon',
-  SPA: 'pennsylvania',
-  SSC: 'south-carolina',
-  STN: 'tennessee',
-  STX: 'texas',
-  SVA: 'virginia',
-  SWA: 'washington',
-  SWI: 'wisconsin',
+// Per-state gas price lookup: state slug → EIA duoarea codes to try in order.
+// Tries the state-level code first; falls back to the most specific PADD region.
+// EIA only publishes weekly state-level gas prices for 9 states — the rest use
+// PADD regional averages (R1X=New England, R1Y=Central Atlantic, R1Z=Lower Atlantic,
+// R20=Midwest, R30=Gulf Coast, R40=Rocky Mountain, R5XCA=West Coast ex-CA).
+const GAS_STATE_LOOKUPS = {
+  'alabama':        ['SAL',  'R30'],    // PADD 3 Gulf Coast
+  'arizona':        ['SAZ',  'R5XCA'], // PADD 5 ex-CA (better proxy than R50 which includes CA)
+  'california':     ['SCA'],
+  'colorado':       ['SCO',  'R40'],   // PADD 4 Rocky Mountain
+  'connecticut':    ['SCT',  'R1X'],   // PADD 1A New England
+  'florida':        ['SFL'],
+  'georgia':        ['SGA',  'R1Z'],   // PADD 1C Lower Atlantic
+  'illinois':       ['SIL',  'R20'],   // PADD 2 Midwest
+  'indiana':        ['SIN',  'R20'],
+  'kentucky':       ['SKY',  'R20'],
+  'louisiana':      ['SLA',  'R30'],
+  'massachusetts':  ['SMA'],
+  'maryland':       ['SMD',  'R1Y'],   // PADD 1B Central Atlantic
+  'michigan':       ['SMI',  'R20'],
+  'minnesota':      ['SMN'],
+  'missouri':       ['SMO',  'R20'],
+  'north-carolina': ['SNC',  'R1Z'],
+  'new-jersey':     ['SNJ',  'R1Y'],
+  'nevada':         ['SNV',  'R5XCA'],
+  'new-york':       ['SNY'],
+  'ohio':           ['SOH'],
+  'oklahoma':       ['SOK',  'R20'],
+  'oregon':         ['SOR',  'R5XCA'],
+  'pennsylvania':   ['SPA',  'R1Y'],
+  'south-carolina': ['SSC',  'R1Z'],
+  'tennessee':      ['STN',  'R20'],
+  'texas':          ['STX'],
+  'virginia':       ['SVA',  'R1Z'],
+  'washington':     ['SWA'],
+  'wisconsin':      ['SWI',  'R20'],
 };
 
 // EIA electricity/retail-sales stateid (2-letter) → our state slug
@@ -190,11 +192,17 @@ async function main() {
   if (gas.NUS  !== undefined) prices.national.avgGas  = gas.NUS;
   if (elec.US  !== undefined) prices.national.avgElec = elec.US;
 
-  // Patch per-state avgGas
+  // Patch per-state avgGas — try state-level code first, fall back to PADD region
   let gasPatched = 0;
-  for (const [code, slug] of Object.entries(GAS_DUOAREA_TO_SLUG)) {
-    if (!slug || !prices.states[slug]) continue;
-    if (gas[code] !== undefined) { prices.states[slug].avgGas = gas[code]; gasPatched++; }
+  for (const [slug, codes] of Object.entries(GAS_STATE_LOOKUPS)) {
+    if (!prices.states[slug]) continue;
+    for (const code of codes) {
+      if (gas[code] !== undefined) {
+        prices.states[slug].avgGas = gas[code];
+        gasPatched++;
+        break;
+      }
+    }
   }
 
   // Patch per-state avgElec

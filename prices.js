@@ -193,7 +193,7 @@ window.PRICES = {
       "name": "Pennsylvania",
       "avgElec": 0.21,
       "touOffPeak": 0.08,
-      "avgGas": 3.4,
+      "avgGas": 4.53,
       "dcfc": 0.48,
       "touProgram": "PECO / PPL Electric EV TOU — off-peak 10 pm–6 am",
       "cities": {
@@ -238,7 +238,7 @@ window.PRICES = {
       "name": "Illinois",
       "avgElec": 0.19,
       "touOffPeak": 0.06,
-      "avgGas": 3.55,
+      "avgGas": 4.4,
       "dcfc": 0.48,
       "touProgram": "ComEd Real-Time Pricing / EV Hourly — off-peak 10 pm–6 am",
       "cities": {
@@ -328,7 +328,7 @@ window.PRICES = {
       "name": "Georgia",
       "avgElec": 0.15,
       "touOffPeak": 0.04,
-      "avgGas": 2.95,
+      "avgGas": 4.12,
       "dcfc": 0.48,
       "touProgram": "Georgia Power EVOP — off-peak 2 am–2 pm (exceptionally cheap overnight)",
       "cities": {
@@ -373,7 +373,7 @@ window.PRICES = {
       "name": "North Carolina",
       "avgElec": 0.16,
       "touOffPeak": 0.07,
-      "avgGas": 3.1,
+      "avgGas": 4.12,
       "dcfc": 0.48,
       "touProgram": "Duke Energy Carolinas / Progress EV TOU — off-peak 9 pm–9 am",
       "cities": {
@@ -418,7 +418,7 @@ window.PRICES = {
       "name": "Michigan",
       "avgElec": 0.21,
       "touOffPeak": 0.08,
-      "avgGas": 3.25,
+      "avgGas": 4.4,
       "dcfc": 0.48,
       "touProgram": "DTE Energy EV Rate / Consumers EV Advantage — off-peak 11 pm–7 am",
       "cities": {
@@ -463,7 +463,7 @@ window.PRICES = {
       "name": "New Jersey",
       "avgElec": 0.23,
       "touOffPeak": 0.09,
-      "avgGas": 3.5,
+      "avgGas": 4.53,
       "dcfc": 0.48,
       "touProgram": "PSE&G / JCP&L EV TOU — off-peak 11 pm–9 am",
       "cities": {
@@ -508,7 +508,7 @@ window.PRICES = {
       "name": "Virginia",
       "avgElec": 0.17,
       "touOffPeak": 0.07,
-      "avgGas": 3.15,
+      "avgGas": 4.12,
       "dcfc": 0.48,
       "touProgram": "Dominion Energy EV TOU — off-peak 10 pm–6 am",
       "cities": {
@@ -598,7 +598,7 @@ window.PRICES = {
       "name": "Arizona",
       "avgElec": 0.16,
       "touOffPeak": 0.06,
-      "avgGas": 3.4,
+      "avgGas": 5.19,
       "dcfc": 0.48,
       "touProgram": "APS EV Time Advantage / SRP TOU-E — off-peak 10 pm–noon",
       "cities": {
@@ -733,7 +733,7 @@ window.PRICES = {
       "name": "Oregon",
       "avgElec": 0.15,
       "touOffPeak": 0.06,
-      "avgGas": 3.95,
+      "avgGas": 5.19,
       "dcfc": 0.48,
       "touProgram": "Portland General Electric Time of Day — off-peak 9 pm–7 am",
       "cities": {
@@ -778,7 +778,7 @@ window.PRICES = {
       "name": "Tennessee",
       "avgElec": 0.15,
       "touOffPeak": 0.06,
-      "avgGas": 3,
+      "avgGas": 4.4,
       "dcfc": 0.48,
       "touProgram": "TVA / local co-ops EV TOU — off-peak 9 pm–9 am"
     },
@@ -786,7 +786,7 @@ window.PRICES = {
       "name": "Indiana",
       "avgElec": 0.18,
       "touOffPeak": 0.07,
-      "avgGas": 3.25,
+      "avgGas": 4.4,
       "dcfc": 0.48,
       "touProgram": "Duke Energy Indiana / AEP Indiana EV TOU"
     },
@@ -794,7 +794,7 @@ window.PRICES = {
       "name": "Missouri",
       "avgElec": 0.13,
       "touOffPeak": 0.07,
-      "avgGas": 3.1,
+      "avgGas": 4.4,
       "dcfc": 0.48,
       "touProgram": "Ameren Missouri / Evergy EV TOU"
     },
@@ -802,7 +802,7 @@ window.PRICES = {
       "name": "Maryland",
       "avgElec": 0.36,
       "touOffPeak": 0.08,
-      "avgGas": 3.3,
+      "avgGas": 4.53,
       "dcfc": 0.48,
       "touProgram": "BGE EV TOU / Pepco Smart Energy — off-peak midnight–7 am"
     },
@@ -810,7 +810,7 @@ window.PRICES = {
       "name": "Wisconsin",
       "avgElec": 0.19,
       "touOffPeak": 0.08,
-      "avgGas": 3.2,
+      "avgGas": 4.4,
       "dcfc": 0.48,
       "touProgram": "We Energies / Xcel Wisconsin EV TOU"
     },
@@ -826,7 +826,7 @@ window.PRICES = {
       "name": "South Carolina",
       "avgElec": 0.16,
       "touOffPeak": 0.07,
-      "avgGas": 2.95,
+      "avgGas": 4.12,
       "dcfc": 0.48,
       "touProgram": "Duke Energy Carolinas / Dominion Energy SC EV rate"
     },
@@ -834,7 +834,7 @@ window.PRICES = {
       "name": "Alabama",
       "avgElec": 0.17,
       "touOffPeak": 0.06,
-      "avgGas": 2.95,
+      "avgGas": 3.95,
       "dcfc": 0.48,
       "touProgram": "Alabama Power EV TOU"
     },
@@ -842,7 +842,7 @@ window.PRICES = {
       "name": "Louisiana",
       "avgElec": 0.14,
       "touOffPeak": 0.05,
-      "avgGas": 2.9,
+      "avgGas": 3.95,
       "dcfc": 0.48,
       "touProgram": "Entergy Louisiana EV rate — off-peak nights"
     },
@@ -850,7 +850,7 @@ window.PRICES = {
       "name": "Kentucky",
       "avgElec": 0.15,
       "touOffPeak": 0.06,
-      "avgGas": 3.1,
+      "avgGas": 4.4,
       "dcfc": 0.48,
       "touProgram": "LG&E / KU EV TOU / East Kentucky Power"
     },
@@ -858,7 +858,7 @@ window.PRICES = {
       "name": "Oklahoma",
       "avgElec": 0.14,
       "touOffPeak": 0.06,
-      "avgGas": 2.9,
+      "avgGas": 4.4,
       "dcfc": 0.48,
       "touProgram": "OG&E EV Smart Charge — off-peak midnight–6 am"
     },
@@ -866,7 +866,7 @@ window.PRICES = {
       "name": "Connecticut",
       "avgElec": 0.3,
       "touOffPeak": 0.17,
-      "avgGas": 3.45,
+      "avgGas": 4.49,
       "dcfc": 0.48,
       "touProgram": "Eversource CT / UI SmartRide EV — off-peak midnight–8 am"
     },
@@ -874,7 +874,7 @@ window.PRICES = {
       "name": "Nevada",
       "avgElec": 0.14,
       "touOffPeak": 0.06,
-      "avgGas": 4.15,
+      "avgGas": 5.19,
       "dcfc": 0.48,
       "touProgram": "NV Energy EV TOU — off-peak 9 pm–noon"
     }
