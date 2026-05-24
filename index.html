@@ -188,6 +188,12 @@
     line-height: 1;
     transition: border-color 0.18s;
   }
+  .mpge-hero input[type="number"]::-webkit-inner-spin-button,
+  .mpge-hero input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  .mpge-hero input[type="number"] { -moz-appearance: textfield; }
   .mpge-hero input[type="number"]:focus {
     outline: none;
     border-bottom-color: var(--ev);
@@ -567,7 +573,7 @@
   el("mpge").addEventListener("input", () => {
     const v = parseFloat(el("mpge").value) || 0;
     syncSlider(v);
-    updateNearest(v);
+    if (v > 0) updateNearest(v);
     calc();
   });
   ["gas", "home-rate", "dcfc-rate"].forEach(id => el(id).addEventListener("input", calc));
