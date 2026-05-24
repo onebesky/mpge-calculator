@@ -163,6 +163,114 @@
 
   .footnote { color: var(--ink-dim); font-size: 12px; margin-top: 24px; line-height: 1.6; }
   .footnote code { color: var(--accent); }
+
+  /* MPGe hero section */
+  .mpge-hero {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 10px;
+    margin: 8px 0 4px;
+  }
+  .mpge-hero input[type="number"] {
+    width: 160px;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid var(--panel-line);
+    border-radius: 0;
+    padding: 0 8px 4px;
+    font-family: 'Fraunces', serif;
+    font-size: 68px;
+    font-weight: 900;
+    color: var(--accent);
+    text-align: center;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    transition: border-color 0.18s;
+  }
+  .mpge-hero input[type="number"]:focus {
+    outline: none;
+    border-bottom-color: var(--ev);
+  }
+  .mpge-hero .unit {
+    font-size: 22px;
+    color: var(--ink-dim);
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* Gradient slider */
+  #mpge-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 10px;
+    border-radius: 5px;
+    background: linear-gradient(to right, #e84040, #e88040, #f4c840, #a0d040, #40c060);
+    outline: none;
+    cursor: pointer;
+    border: none;
+    padding: 0;
+    margin: 12px 0 0;
+    display: block;
+  }
+  #mpge-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--ink);
+    border: 3px solid var(--bg);
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  }
+  #mpge-slider::-moz-range-track {
+    background: linear-gradient(to right, #e84040, #e88040, #f4c840, #a0d040, #40c060);
+    height: 10px;
+    border-radius: 5px;
+    border: none;
+  }
+  #mpge-slider::-moz-range-thumb {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--ink);
+    border: 3px solid var(--bg);
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  }
+
+  /* Tick marks */
+  .mpge-ticks {
+    position: relative;
+    height: 12px;
+    margin-top: 6px;
+  }
+  .mpge-tick {
+    position: absolute;
+    top: 0;
+    width: 2px;
+    height: 10px;
+    border-radius: 1px;
+    transform: translateX(-50%);
+    opacity: 0.65;
+    cursor: default;
+  }
+  .mpge-tick.bev  { background: var(--ev); }
+  .mpge-tick.phev { background: var(--accent); }
+
+  /* Nearest-vehicle chip */
+  .mpge-nearest {
+    text-align: center;
+    font-size: 12px;
+    color: var(--ink-dim);
+    min-height: 1.5em;
+    margin-top: 5px;
+  }
+  .mpge-nearest .vname { color: var(--ink); font-weight: 500; }
+  .mpge-nearest .vtype.bev  { color: var(--ev); }
+  .mpge-nearest .vtype.phev { color: var(--accent); }
+
   a { color: var(--ev); }
 </style>
 </head>
@@ -176,7 +284,7 @@
 
   <div class="panel">
     <h2>Your location &amp; prices</h2>
-    <p class="hint">Select your state for current average prices. Add a city for more precise local rates — then override any number you know.</p>
+    <p class="hint">Select your state for current average prices, then override any number you know.</p>
 
     <div class="row">
       <div class="field">
@@ -185,23 +293,22 @@
           <option value="">— US Average —</option>
         </select>
       </div>
-      <div class="field">
-        <label for="city">City <span class="optional">(optional)</span></label>
-        <select id="city" disabled>
-          <option value="">— Select a state first —</option>
-        </select>
-      </div>
     </div>
 
-    <div class="row">
-      <div class="field">
-        <label for="mpge">EV efficiency (MPGe)</label>
+    <div class="field mpge-section">
+      <label for="mpge">EV efficiency</label>
+      <div class="mpge-hero">
         <input type="number" id="mpge" value="100" min="1" step="1">
+        <span class="unit">MPGe</span>
       </div>
-      <div class="field">
-        <label for="gas">Gas price</label>
-        <div class="prefix-wrap"><span>$</span><input type="number" id="gas" value="3.30" step="0.01"></div>
-      </div>
+      <input type="range" id="mpge-slider" min="25" max="150" value="100" step="1">
+      <div class="mpge-ticks" id="mpge-ticks"></div>
+      <div class="mpge-nearest" id="mpge-nearest"></div>
+    </div>
+
+    <div class="field">
+      <label for="gas">Gas price</label>
+      <div class="prefix-wrap"><span>$</span><input type="number" id="gas" value="3.30" step="0.01"></div>
     </div>
 
     <div class="field">
@@ -261,11 +368,44 @@
   <p class="footnote">
     Math: <code>EV $/mi = (33.7 ÷ MPGe) × $/kWh</code>, then <code>equivalent MPG = gas $/gal ÷ EV $/mi</code>.
     The 33.7 kWh figure is the EPA's energy content of one gallon of gasoline.
-    Prices last updated <span id="prices-updated"></span>. Sources: EIA (electricity state averages), AAA/EIA (gas), and published utility tariff sheets (TOU off-peak rates). Numbers are snapshots — verify with your utility before making decisions.
+    Gas prices as of <span id="prices-updated-gas"></span> · Electricity prices as of <span id="prices-updated-elec"></span>. Sources: EIA (electricity state averages, monthly), EIA/AAA (gas, weekly), utility tariff sheets (TOU off-peak rates). Numbers are snapshots — verify with your utility before making decisions.
   </p>
 </div>
 
 <script>
+  const VEHICLES = [
+    { name: "Wrangler 4xe",          mpge: 49,  type: "phev" },
+    { name: "BMW X5 45e",            mpge: 50,  type: "phev" },
+    { name: "Volvo XC60 PHEV",       mpge: 55,  type: "phev" },
+    { name: "Grand Cherokee 4xe",    mpge: 56,  type: "phev" },
+    { name: "Rivian R1T",            mpge: 73,  type: "bev"  },
+    { name: "BMW 330e",              mpge: 75,  type: "phev" },
+    { name: "F-150 Lightning",       mpge: 78,  type: "bev"  },
+    { name: "Hyundai Tucson PHEV",   mpge: 80,  type: "phev" },
+    { name: "Kia Sportage PHEV",     mpge: 84,  type: "phev" },
+    { name: "Toyota RAV4 Prime",     mpge: 94,  type: "phev" },
+    { name: "Cadillac Lyriq",        mpge: 95,  type: "bev"  },
+    { name: "Audi Q4 e-tron",        mpge: 96,  type: "bev"  },
+    { name: "Mustang Mach-E",        mpge: 100, type: "bev"  },
+    { name: "BMW i4",                mpge: 102, type: "bev"  },
+    { name: "Tesla Model X",         mpge: 102, type: "bev"  },
+    { name: "Ford Escape PHEV",      mpge: 105, type: "phev" },
+    { name: "VW ID.4",               mpge: 107, type: "bev"  },
+    { name: "Polestar 2",            mpge: 107, type: "bev"  },
+    { name: "Nissan Leaf",           mpge: 111, type: "bev"  },
+    { name: "Hyundai Ioniq 5",       mpge: 114, type: "bev"  },
+    { name: "Chevy Bolt EUV",        mpge: 115, type: "bev"  },
+    { name: "Kia EV6",               mpge: 117, type: "bev"  },
+    { name: "Chevy Bolt EV",         mpge: 118, type: "bev"  },
+    { name: "Hyundai Kona Electric", mpge: 120, type: "bev"  },
+    { name: "Tesla Model Y",         mpge: 123, type: "bev"  },
+    { name: "Tesla Model S",         mpge: 124, type: "bev"  },
+    { name: "Lucid Air",             mpge: 131, type: "bev"  },
+    { name: "Tesla Model 3",         mpge: 132, type: "bev"  },
+    { name: "Toyota Prius Prime",    mpge: 133, type: "phev" },
+    { name: "Hyundai Ioniq 6",       mpge: 140, type: "bev"  },
+  ];
+  const SLIDER_MIN = 25, SLIDER_MAX = 150;
   const DATA = window.PRICES;
   const ENERGY = 33.7;
   const el = id => document.getElementById(id);
@@ -273,15 +413,39 @@
   let chargeMode = "home";
   let touMode = "avg";
   let currentState = null;
-  let currentCity = null;
+
+  function buildTicks() {
+    const container = el("mpge-ticks");
+    VEHICLES.forEach(v => {
+      const pct = (v.mpge - SLIDER_MIN) / (SLIDER_MAX - SLIDER_MIN) * 100;
+      const tick = document.createElement("span");
+      tick.className = "mpge-tick " + v.type;
+      tick.style.left = pct + "%";
+      tick.title = v.name + " · " + v.mpge + " MPGe";
+      container.appendChild(tick);
+    });
+  }
+
+  function updateNearest(mpge) {
+    let closest = VEHICLES[0], minDist = Infinity;
+    for (const v of VEHICLES) {
+      const d = Math.abs(v.mpge - mpge);
+      if (d < minDist) { minDist = d; closest = v; }
+    }
+    el("mpge-nearest").innerHTML =
+      "≈ <span class='vname'>" + closest.name + "</span>" +
+      " · " + closest.mpge + " MPGe" +
+      " · <span class='vtype " + closest.type + "'>" + closest.type.toUpperCase() + "</span>";
+  }
+
+  function syncSlider(mpge) {
+    el("mpge-slider").value = Math.max(SLIDER_MIN, Math.min(SLIDER_MAX, mpge));
+  }
 
   // --- Data helpers ---
 
   function getCurrentPrices() {
-    if (!currentState) return DATA.national;
-    const st = DATA.states[currentState];
-    if (currentCity && st.cities && st.cities[currentCity]) return st.cities[currentCity];
-    return st;
+    return currentState ? DATA.states[currentState] : DATA.national;
   }
 
   function getStateData() {
@@ -299,32 +463,6 @@
         o.value = slug; o.textContent = st.name;
         sel.appendChild(o);
       });
-  }
-
-  function populateCities(stateSlug) {
-    const sel = el("city");
-    sel.innerHTML = "";
-    const st = DATA.states[stateSlug];
-    const cities = st && st.cities;
-
-    if (!cities || Object.keys(cities).length === 0) {
-      const o = document.createElement("option");
-      o.value = ""; o.textContent = "— No city data available —";
-      sel.appendChild(o);
-      sel.disabled = true;
-      return;
-    }
-
-    const def = document.createElement("option");
-    def.value = ""; def.textContent = "— Statewide average —";
-    sel.appendChild(def);
-
-    Object.entries(cities).forEach(([slug, city]) => {
-      const o = document.createElement("option");
-      o.value = slug; o.textContent = city.name;
-      sel.appendChild(o);
-    });
-    sel.disabled = false;
   }
 
   // --- Price application ---
@@ -360,54 +498,33 @@
       el("meta-desc").content = "Calculate what your EV's MPGe rating really costs per mile compared to a gas car, based on your local electricity and gas prices.";
       return;
     }
-    const city = currentCity && st.cities && st.cities[currentCity];
-    const loc = city ? `${city.name}, ${st.name}` : st.name;
     const prices = getCurrentPrices();
-    document.title = `${loc} EV Cost Calculator — True MPGe`;
+    document.title = `${st.name} EV Cost Calculator — True MPGe`;
     el("meta-desc").content =
-      `What does an EV really cost to drive in ${loc}? Average electricity $${prices.avgElec.toFixed(2)}/kWh, off-peak TOU $${prices.touOffPeak.toFixed(2)}/kWh, gas $${prices.avgGas.toFixed(2)}/gal.`;
+      `What does an EV really cost to drive in ${st.name}? Average electricity $${prices.avgElec.toFixed(2)}/kWh, off-peak TOU $${prices.touOffPeak.toFixed(2)}/kWh, gas $${prices.avgGas.toFixed(2)}/gal.`;
   }
 
   // --- URL sync ---
 
   function updateUrl() {
-    let path = "/";
-    if (currentState) {
-      path = `/${currentState}`;
-      if (currentCity) path += `/${currentCity}`;
-    }
-    history.replaceState({}, "", path);
+    history.replaceState({}, "", currentState ? `/${currentState}` : "/");
   }
 
   function readUrl() {
-    // Try path segments first: /california or /california/los-angeles
     const parts = window.location.pathname.split("/").filter(Boolean);
     let stateSlug = parts[0] || null;
-    let citySlug = parts[1] || null;
 
-    // Fall back to query params (?state=california&city=los-angeles)
     if (!stateSlug || !DATA.states[stateSlug]) {
-      const p = new URLSearchParams(window.location.search);
-      stateSlug = p.get("state");
-      citySlug = p.get("city");
+      stateSlug = new URLSearchParams(window.location.search).get("state");
     }
 
     if (stateSlug && DATA.states[stateSlug]) {
       currentState = stateSlug;
       el("state").value = stateSlug;
-      populateCities(stateSlug);
-
-      if (citySlug) {
-        const st = DATA.states[stateSlug];
-        if (st.cities && st.cities[citySlug]) {
-          currentCity = citySlug;
-          el("city").value = citySlug;
-        }
-      }
       applyPrices();
       updateMeta();
     } else {
-      applyPrices(); // national defaults
+      applyPrices();
     }
   }
 
@@ -415,20 +532,6 @@
 
   el("state").addEventListener("change", () => {
     currentState = el("state").value || null;
-    currentCity = null;
-    if (currentState) {
-      populateCities(currentState);
-    } else {
-      el("city").innerHTML = '<option value="">— Select a state first —</option>';
-      el("city").disabled = true;
-    }
-    applyPrices();
-    updateMeta();
-    updateUrl();
-  });
-
-  el("city").addEventListener("change", () => {
-    currentCity = el("city").value || null;
     applyPrices();
     updateMeta();
     updateUrl();
@@ -461,7 +564,19 @@
     calc();
   });
 
-  ["mpge", "gas", "home-rate", "dcfc-rate"].forEach(id => el(id).addEventListener("input", calc));
+  el("mpge").addEventListener("input", () => {
+    const v = parseFloat(el("mpge").value) || 0;
+    syncSlider(v);
+    updateNearest(v);
+    calc();
+  });
+  ["gas", "home-rate", "dcfc-rate"].forEach(id => el(id).addEventListener("input", calc));
+  el("mpge-slider").addEventListener("input", () => {
+    const v = parseInt(el("mpge-slider").value);
+    el("mpge").value = v;
+    updateNearest(v);
+    calc();
+  });
 
   // --- Calculation ---
 
@@ -497,9 +612,14 @@
   }
 
   // --- Init ---
-  el("prices-updated").textContent = DATA.updated;
+  el("prices-updated-gas").textContent = DATA.updatedGas || DATA.updated;
+  el("prices-updated-elec").textContent = DATA.updatedElec || DATA.updated;
   populateStates();
   readUrl();
+  buildTicks();
+  const initMpge = parseFloat(el("mpge").value) || 100;
+  syncSlider(initMpge);
+  updateNearest(initMpge);
   calc();
 </script>
 </body>
