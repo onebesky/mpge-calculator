@@ -1,0 +1,5 @@
+# Catch-all rewrite — serves index.html for all paths not matching a real file.
+# Static files (prices.js, etc.) take precedence over this rule.
+# For Vercel: add vercel.json with {"rewrites":[{"source":"/((?!prices.js).*)","destination":"/index.html"}]}
+# For Apache: add .htaccess with RewriteRule. For GitHub Pages: add 404.html that JS-redirects.
+/*    /index.html   200
