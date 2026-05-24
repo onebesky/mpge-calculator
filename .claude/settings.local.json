@@ -6,7 +6,9 @@
       "Read(//private/tmp/**)",
       "Bash(node -e \"const fs = require\\('fs'\\); const s = fs.readFileSync\\('/Users/ondrejnebesky/workspace/mpge-calculator/index.html', 'utf8'\\); console.log\\(s.includes\\('tou-toggle'\\), s.includes\\('prices.js'\\), s.includes\\('Off-peak TOU'\\)\\);\")",
       "Bash(curl -s http://localhost:8750/prices.js)",
-      "Bash(curl -s http://localhost:8750/)"
+      "Bash(curl -s http://localhost:8750/)",
+      "Bash(ls /Users/ondrejnebesky/.claude/plugins/cache/claude-plugins-official/superpowers/5.0.7/scripts/)",
+      "Read(//Users/ondrejnebesky/.claude/plugins/cache/claude-plugins-official/superpowers/5.0.7/scripts/**)"
     ]
   }
 }
