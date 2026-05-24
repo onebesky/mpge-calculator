@@ -5,6 +5,10 @@ on:
     - cron: '0 8 * * 1'  # Monday 08:00 UTC
   workflow_dispatch:       # allow manual trigger from GitHub UI
 
+concurrency:
+  group: price-update
+  cancel-in-progress: false
+
 jobs:
   update-prices:
     runs-on: ubuntu-latest
@@ -25,12 +29,14 @@ jobs:
 
       - name: Commit if prices changed
         run: |
+          set -e
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           if git diff --quiet prices.js; then
             echo "Prices unchanged — nothing to commit."
           else
             git add prices.js
-            git commit -m "chore: update prices [skip ci]"
+            git commit -m "chore: update prices [skip ci]"  # [skip ci] prevents Netlify redeploy
+            git pull --rebase
             git push
           fi
