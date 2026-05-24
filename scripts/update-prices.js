@@ -4,7 +4,9 @@
 const fs   = require('fs');
 const path = require('path');
 
-const API_KEY = process.env.EIA_API_KEY;
+const API_KEY    = process.env.EIA_API_KEY;
+const OPENEI_KEY = process.env.OPENEI_API_KEY;
+
 if (!API_KEY) {
   console.error('Error: EIA_API_KEY environment variable is not set.');
   process.exit(1);
@@ -93,6 +95,20 @@ const ELEC_STATEID_TO_SLUG = {
   WI: 'wisconsin',
 };
 
+// State slug → USPS 2-letter code (for OpenEI API)
+const SLUG_TO_STATE_CODE = {
+  'alabama': 'AL',        'arizona': 'AZ',       'california': 'CA',
+  'colorado': 'CO',       'connecticut': 'CT',   'florida': 'FL',
+  'georgia': 'GA',        'illinois': 'IL',       'indiana': 'IN',
+  'kentucky': 'KY',       'louisiana': 'LA',     'massachusetts': 'MA',
+  'maryland': 'MD',       'michigan': 'MI',       'minnesota': 'MN',
+  'missouri': 'MO',       'north-carolina': 'NC', 'new-jersey': 'NJ',
+  'nevada': 'NV',         'new-york': 'NY',       'ohio': 'OH',
+  'oklahoma': 'OK',       'oregon': 'OR',         'pennsylvania': 'PA',
+  'south-carolina': 'SC', 'tennessee': 'TN',      'texas': 'TX',
+  'virginia': 'VA',       'washington': 'WA',     'wisconsin': 'WI',
+};
+
 // Build a query string without percent-encoding bracket notation in keys.
 // EIA v2 uses data[0]=value, facets[product][0]=EPMR style params.
 function eiaUrl(base, params) {
@@ -129,14 +145,16 @@ async function fetchGasPrices() {
   }
 
   // Results are sorted newest-first; first occurrence per duoarea = most recent
+  let latestPeriod = null;
   const byArea = {};
   for (const row of response.data) {
+    if (!latestPeriod) latestPeriod = row.period;
     const val = round2(parseFloat(row.value));
     if (!(row.duoarea in byArea) && Number.isFinite(val)) {
       byArea[row.duoarea] = val;
     }
   }
-  return byArea;
+  return { byArea, period: latestPeriod };
 }
 
 async function fetchElecPrices() {
@@ -161,19 +179,109 @@ async function fetchElecPrices() {
   }
 
   // Price is in cents/kWh — convert to $/kWh
+  let latestPeriod = null;
   const byState = {};
   for (const row of response.data) {
+    if (!latestPeriod) latestPeriod = row.period;
     const val = round2(parseFloat(row.price) / 100);
     if (!(row.stateid in byState) && Number.isFinite(val)) {
       byState[row.stateid] = val;
     }
   }
-  return byState;
+  return { byState, period: latestPeriod };
+}
+
+// Extract the off-peak energy rate at 2 am on a January weekday from an OpenEI rate plan.
+// OpenEI energyweekdayschedule is a 12×24 matrix [month][hour] → period index.
+// energyratestructure[periodIdx][tier] has { rate, adj, unit } fields.
+function planOffPeakRate(plan) {
+  try {
+    const sched  = plan.energyweekdayschedule;
+    const struct = plan.energyratestructure;
+    if (!Array.isArray(sched) || !Array.isArray(struct)) return null;
+    const periodIdx = sched[0][2]; // January (month 0), 2 am (hour 2)
+    if (periodIdx == null || !Array.isArray(struct[periodIdx])) return null;
+    const tiers = struct[periodIdx];
+    if (!tiers.length) return null;
+    // First tier's base rate + adjustment; skip demand-charge-only tiers
+    const tier = tiers[0];
+    if (tier.unit && tier.unit !== 'kwh') return null;
+    const rate = (tier.rate || 0) + (tier.adj || 0);
+    // Sanity-check: must be a plausible residential off-peak $/kWh
+    return rate > 0.02 && rate < 1.20 ? round2(rate) : null;
+  } catch {
+    return null;
+  }
+}
+
+async function fetchOpenEITouRates() {
+  if (!OPENEI_KEY) {
+    console.log('  OPENEI_API_KEY not set — skipping TOU rate update');
+    return {};
+  }
+
+  const results = {};
+  const stateEntries = Object.entries(SLUG_TO_STATE_CODE);
+
+  // Process states in batches to avoid hammering the API
+  const CONCURRENCY = 5;
+  for (let i = 0; i < stateEntries.length; i += CONCURRENCY) {
+    const batch = stateEntries.slice(i, i + CONCURRENCY);
+    await Promise.all(batch.map(async ([slug, code]) => {
+      try {
+        const url = new URL('https://api.openei.org/utility_rates');
+        url.searchParams.set('api_key',  OPENEI_KEY);
+        url.searchParams.set('version',  'latest');
+        url.searchParams.set('format',   'json');
+        url.searchParams.set('sector',   'Residential');
+        url.searchParams.set('state',    code);
+        url.searchParams.set('detail',   'full');
+        url.searchParams.set('limit',    '500');
+        url.searchParams.set('approved', 'true');
+
+        const res = await fetch(url.toString());
+        if (!res.ok) {
+          console.warn(`  OpenEI ${code}: HTTP ${res.status}`);
+          return;
+        }
+        const data = await res.json();
+        const items = Array.isArray(data.items) ? data.items : [];
+
+        // Prefer plans that mention EV / electric vehicle in their name.
+        // Fall back to all TOU plans if none found (e.g. TX deregulated market).
+        let candidates = items.filter(p => {
+          const n = (p.name || '').toUpperCase();
+          return (n.includes('EV') || n.includes('ELECTRIC VEHICLE')) &&
+                 p.energyweekdayschedule && p.energyratestructure;
+        });
+
+        if (!candidates.length) {
+          candidates = items.filter(p =>
+            (p.name || '').toUpperCase().includes('TOU') &&
+            p.energyweekdayschedule && p.energyratestructure
+          );
+        }
+
+        if (!candidates.length) return;
+
+        const rates = candidates.map(planOffPeakRate).filter(r => r !== null);
+        if (!rates.length) return;
+
+        // Median across matching plans to avoid outliers from oddly-structured entries
+        rates.sort((a, b) => a - b);
+        results[slug] = rates[Math.floor(rates.length / 2)];
+      } catch (e) {
+        console.warn(`  OpenEI ${code}: ${e.message}`);
+      }
+    }));
+  }
+
+  return results;
 }
 
 function writePricesJs(data) {
   const content =
-    '// Price data — update this file periodically. Sources: EIA (electricity), AAA/EIA (gas), utility tariff sheets (TOU).\n' +
+    '// Price data — update this file periodically. Sources: EIA (electricity), AAA/EIA (gas), OpenEI URDB (TOU).\n' +
     `// Last updated: ${data.updated}\n` +
     `window.PRICES = ${JSON.stringify(data, null, 2)};\n`;
   fs.writeFileSync(path.resolve(__dirname, '../prices.js'), content, 'utf8');
@@ -181,12 +289,17 @@ function writePricesJs(data) {
 
 async function main() {
   console.log('Fetching EIA gas prices…');
-  const gas = await fetchGasPrices();
-  console.log(`  ${Object.keys(gas).length} areas returned`);
+  const { byArea: gas, period: gasPeriod } = await fetchGasPrices();
+  console.log(`  ${Object.keys(gas).length} areas returned (period: ${gasPeriod})`);
 
   console.log('Fetching EIA electricity prices…');
-  const elec = await fetchElecPrices();
-  console.log(`  ${Object.keys(elec).length} states returned`);
+  const { byState: elec, period: elecPeriod } = await fetchElecPrices();
+  console.log(`  ${Object.keys(elec).length} states returned (period: ${elecPeriod})`);
+
+  console.log('Fetching OpenEI TOU off-peak rates…');
+  const touRates = await fetchOpenEITouRates();
+  const touPatched = Object.keys(touRates).length;
+  console.log(`  ${touPatched} states updated from OpenEI`);
 
   // Patch national averages
   if (gas.NUS  !== undefined) prices.national.avgGas  = gas.NUS;
@@ -212,9 +325,27 @@ async function main() {
     if (elec[code] !== undefined) { prices.states[slug].avgElec = elec[code]; elecPatched++; }
   }
 
-  prices.updated = new Date().toISOString().slice(0, 10);
+  // Patch per-state touOffPeak from OpenEI; also update national median
+  for (const [slug, rate] of Object.entries(touRates)) {
+    if (prices.states[slug]) prices.states[slug].touOffPeak = rate;
+  }
+  if (touPatched > 0) {
+    const allTou = Object.values(touRates).sort((a, b) => a - b);
+    prices.national.touOffPeak = allTou[Math.floor(allTou.length / 2)];
+  }
+
+  const today = new Date().toISOString().slice(0, 10);
+  prices.updatedGas  = gasPeriod  || today;
+  prices.updatedElec = elecPeriod || today;
+  if (touPatched > 0) prices.updatedTou = today;
+  prices.updated = today;
+
   writePricesJs(prices);
-  console.log(`prices.js written — gas: ${gasPatched} states, elec: ${elecPatched} states (${prices.updated})`);
+  console.log(
+    `prices.js written — gas: ${gasPatched} states (${prices.updatedGas}),` +
+    ` elec: ${elecPatched} states (${prices.updatedElec}),` +
+    ` tou: ${touPatched} states (${prices.updatedTou || 'unchanged'})`
+  );
 }
 
 main().catch(err => {

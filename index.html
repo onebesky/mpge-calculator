@@ -387,7 +387,7 @@
       color: var(--accent);
     }
 
-    #state { max-width: 280px; }
+    #state { width: 100%; }
 
     .field.mpge-section {
       border-top: 1px solid var(--panel-line);
@@ -646,8 +646,9 @@
       Math: <code>EV $/mi = (33.7 ÷ MPGe) × $/kWh</code>, then <code>equivalent MPG = gas $/gal ÷ EV $/mi</code>.
       The 33.7 kWh figure is the EPA's energy content of one gallon of gasoline.
       Gas prices as of <span id="prices-updated-gas"></span> · Electricity prices as of <span
-        id="prices-updated-elec"></span>. Sources: EIA (electricity state averages, monthly), EIA/AAA (gas, weekly),
-      utility tariff sheets (TOU off-peak rates). Numbers are snapshots — verify with your utility before making
+        id="prices-updated-elec"></span> · TOU off-peak rates as of <span id="prices-updated-tou"></span>.
+      Sources: EIA (electricity state averages, monthly), EIA/AAA (gas, weekly),
+      OpenEI URDB (TOU off-peak rates, residential EV plans). Numbers are estimates — verify with your utility before making
       decisions.
     </p>
   </div>
@@ -894,6 +895,7 @@
     // --- Init ---
     el("prices-updated-gas").textContent = DATA.updatedGas || DATA.updated;
     el("prices-updated-elec").textContent = DATA.updatedElec || DATA.updated;
+    el("prices-updated-tou").textContent = DATA.updatedTou || DATA.updated;
     populateStates();
     readUrl();
     buildTicks();
