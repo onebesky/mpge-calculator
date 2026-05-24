@@ -145,7 +145,7 @@ async function fetchElecPrices() {
     'facets[sectorid][0]':   'RES',
     'sort[0][column]':       'period',
     'sort[0][direction]':    'desc',
-    length:                  '100', // EIA returns ~55 electricity entries; safe ceiling
+    length:                  '200', // EIA returns ~55 electricity entries; 200 adds safety margin
   });
 
   const res = await fetch(url);
