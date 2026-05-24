@@ -14,6 +14,10 @@ if (!API_KEY) {
 global.window = {};
 require('../prices.js');
 const prices = global.window.PRICES;
+if (!prices || typeof prices !== 'object') {
+  console.error('Error: prices.js did not assign window.PRICES — file may be corrupt.');
+  process.exit(1);
+}
 
 // EIA petroleum/pri/gnd duoarea code → our state slug
 // NUS = national US average
@@ -109,7 +113,7 @@ async function fetchGasPrices() {
     'facets[process][0]': 'PTE',
     'sort[0][column]':    'period',
     'sort[0][direction]': 'desc',
-    length:               '100',
+    length:               '100', // EIA returns <35 gas areas; safe ceiling
   });
 
   const res = await fetch(url);
@@ -118,12 +122,16 @@ async function fetchGasPrices() {
     throw new Error(`Gas API ${res.status}: ${body}`);
   }
   const { response } = await res.json();
+  if (!Array.isArray(response?.data)) {
+    throw new Error(`Gas API returned unexpected response shape: ${JSON.stringify(response)}`);
+  }
 
   // Results are sorted newest-first; first occurrence per duoarea = most recent
   const byArea = {};
   for (const row of response.data) {
-    if (!(row.duoarea in byArea) && row.value != null) {
-      byArea[row.duoarea] = round2(parseFloat(row.value));
+    const val = round2(parseFloat(row.value));
+    if (!(row.duoarea in byArea) && Number.isFinite(val)) {
+      byArea[row.duoarea] = val;
     }
   }
   return byArea;
@@ -137,7 +145,7 @@ async function fetchElecPrices() {
     'facets[sectorid][0]':   'RES',
     'sort[0][column]':       'period',
     'sort[0][direction]':    'desc',
-    length:                  '100',
+    length:                  '100', // EIA returns ~55 electricity entries; safe ceiling
   });
 
   const res = await fetch(url);
@@ -146,12 +154,16 @@ async function fetchElecPrices() {
     throw new Error(`Electricity API ${res.status}: ${body}`);
   }
   const { response } = await res.json();
+  if (!Array.isArray(response?.data)) {
+    throw new Error(`Electricity API returned unexpected response shape: ${JSON.stringify(response)}`);
+  }
 
   // Price is in cents/kWh — convert to $/kWh
   const byState = {};
   for (const row of response.data) {
-    if (!(row.stateid in byState) && row.price != null) {
-      byState[row.stateid] = round2(parseFloat(row.price) / 100);
+    const val = round2(parseFloat(row.price) / 100);
+    if (!(row.stateid in byState) && Number.isFinite(val)) {
+      byState[row.stateid] = val;
     }
   }
   return byState;
@@ -198,6 +210,6 @@ async function main() {
 }
 
 main().catch(err => {
-  console.error(err.message);
+  console.error(err);
   process.exit(1);
 });
