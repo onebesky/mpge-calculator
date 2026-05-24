@@ -891,7 +891,7 @@
       const rate = blendedRate();
 
       el("wh-mi").innerHTML = mpge > 0
-        ? '→ <b>' + Math.round(33700 / mpge) + '</b> <small> Wh/mi</small>'
+        ? '→ <b>' + Math.round(ENERGY * 1000 / mpge) + '</b> <small> Wh/mi</small>'
         : '';
 
       if (mpge <= 0 || rate <= 0) return;
