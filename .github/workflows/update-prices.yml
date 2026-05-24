@@ -1,0 +1,36 @@
+name: Update fuel prices
+
+on:
+  schedule:
+    - cron: '0 8 * * 1'  # Monday 08:00 UTC
+  workflow_dispatch:       # allow manual trigger from GitHub UI
+
+jobs:
+  update-prices:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Fetch and update prices
+        run: node scripts/update-prices.js
+        env:
+          EIA_API_KEY: ${{ secrets.EIA_API_KEY }}
+
+      - name: Commit if prices changed
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet prices.js; then
+            echo "Prices unchanged — nothing to commit."
+          else
+            git add prices.js
+            git commit -m "chore: update prices [skip ci]"
+            git push
+          fi
