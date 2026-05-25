@@ -4,6 +4,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="icon" type="image/png" href="favicon.png">
   <title>True MPG — what your MPGe actually costs</title>
   <meta name="description" id="meta-desc"
     content="Calculate what your EV's MPGe rating really costs per mile compared to a gas car, based on your local electricity and gas prices.">
@@ -387,7 +389,9 @@
       color: var(--accent);
     }
 
-    #state { width: 100%; }
+    #state {
+      width: 100%;
+    }
 
     .field.mpge-section {
       border-top: 1px solid var(--panel-line);
@@ -448,11 +452,13 @@
       font-size: 18px;
       color: var(--ink-dim);
     }
+
     #wh-mi b {
       color: var(--accent);
       font-weight: 600;
       font-size: 22px;
     }
+
     #wh-mi small {
       font-size: 14px;
     }
@@ -570,9 +576,9 @@
     <header>
       <div class="eyebrow">MPGe is energy, not money</div>
       <h1>What does your <em>MPGe</em><br>really cost?</h1>
-      <p class="sub">A "60 MPGe" sticker tells you nothing about your wallet — electricity and gas prices vary wildly by
-        region and by where you charge. This finds the gas-car MPG that would cost the same to fuel where you actually
-        drive.</p>
+      <p class="sub">A "<span id="sub-mpge">60</span> MPGe" sticker tells you nothing about your estimated spendings
+        since electricity and gas prices vary wildly by region and by where you charge. This tool finds the gas-car MPG
+        that would cost the same to fuel where you actually drive.</p>
     </header>
 
     <div class="panel">
@@ -663,7 +669,8 @@
       Gas prices as of <span id="prices-updated-gas"></span> · Electricity prices as of <span
         id="prices-updated-elec"></span> · TOU off-peak rates as of <span id="prices-updated-tou"></span>.
       Sources: EIA (electricity state averages, monthly), EIA/AAA (gas, weekly),
-      OpenEI URDB (TOU off-peak rates, residential EV plans). Numbers are estimates — verify with your utility before making
+      OpenEI URDB (TOU off-peak rates, residential EV plans). Numbers are estimates — verify with your utility before
+      making
       decisions.
     </p>
   </div>
@@ -893,6 +900,7 @@
       el("wh-mi").innerHTML = mpge > 0
         ? '→ <b>' + Math.round(ENERGY * 1000 / mpge) + '</b> <small> Wh/mi</small>'
         : '';
+      if (mpge > 0) el("sub-mpge").textContent = Math.round(mpge);
 
       if (mpge <= 0 || rate <= 0) return;
 
