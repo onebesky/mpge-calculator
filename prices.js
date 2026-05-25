@@ -1,9 +1,9 @@
 // Price data — update this file periodically. Sources: EIA (electricity), AAA/EIA (gas), OpenEI URDB (TOU).
-// Last updated: 2026-05-24
+// Last updated: 2026-05-25
 window.PRICES = {
-  "updated": "2026-05-24",
-  "updatedGas": "2026-05-24",
-  "updatedElec": "2026-05-24",
+  "updated": "2026-05-25",
+  "updatedGas": "2026-05-18",
+  "updatedElec": "2026-03",
   "updatedTou": "2026-05-24",
   "national": {
     "avgElec": 0.19,
@@ -15,7 +15,7 @@ window.PRICES = {
     "california": {
       "name": "California",
       "avgElec": 0.33,
-      "touOffPeak": 0.20,
+      "touOffPeak": 0.2,
       "avgGas": 5.96,
       "dcfc": 0.48,
       "touProgram": "PG&E EV2-A (~22¢ off-peak midnight–3 pm) / SCE TOU-D-PRIME (~25¢ off-peak 9 pm–4 pm) / SDG&E EV-TOU-5 (~12¢ super off-peak midnight–6 am). Shown rate is three-IOU average."
@@ -87,7 +87,7 @@ window.PRICES = {
     "michigan": {
       "name": "Michigan",
       "avgElec": 0.21,
-      "touOffPeak": 0.10,
+      "touOffPeak": 0.1,
       "avgGas": 4.4,
       "dcfc": 0.48,
       "touProgram": "DTE Energy Overnight Savers (D1.13) — super off-peak 1–7 am ~10¢/kWh"
@@ -127,7 +127,7 @@ window.PRICES = {
     "massachusetts": {
       "name": "Massachusetts",
       "avgElec": 0.3,
-      "touOffPeak": 0.10,
+      "touOffPeak": 0.1,
       "avgGas": 4.45,
       "dcfc": 0.48,
       "touProgram": "National Grid MA SC-1 VTOU / Eversource — off-peak (9 pm–1 pm next day) ~10¢/kWh delivery+supply"
@@ -175,7 +175,7 @@ window.PRICES = {
     "maryland": {
       "name": "Maryland",
       "avgElec": 0.36,
-      "touOffPeak": 0.10,
+      "touOffPeak": 0.1,
       "avgGas": 4.53,
       "dcfc": 0.48,
       "touProgram": "BGE Schedule EV (EVsmart TOU) — off-peak ~10.5¢/kWh (all hours except 10 am–8 pm summer weekdays)"
@@ -183,7 +183,7 @@ window.PRICES = {
     "wisconsin": {
       "name": "Wisconsin",
       "avgElec": 0.19,
-      "touOffPeak": 0.10,
+      "touOffPeak": 0.1,
       "avgGas": 4.4,
       "dcfc": 0.48,
       "touProgram": "We Energies Rg-2 TOU — off-peak 10¢/kWh confirmed"
@@ -207,7 +207,7 @@ window.PRICES = {
     "alabama": {
       "name": "Alabama",
       "avgElec": 0.17,
-      "touOffPeak": 0.10,
+      "touOffPeak": 0.1,
       "avgGas": 3.95,
       "dcfc": 0.48,
       "touProgram": "Alabama Power Rate RTA (Time Advantage) — economy off-peak hours: 10.3¢/kWh; PEV rider adds overnight discount 9 pm–5 am"
