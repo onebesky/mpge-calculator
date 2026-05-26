@@ -683,8 +683,8 @@
           <div class="v" id="ev-cpm">—</div>
         </div>
         <div class="cstat gas">
-          <div class="k">Blended electricity rate</div>
-          <div class="v" id="blend-rate">—</div>
+          <div class="k">Yearly electricity cost (12k mi)</div>
+          <div class="v" id="annual-cost">—</div>
         </div>
       </div>
     </div>
@@ -934,7 +934,7 @@
 
       el("eq-mpg").innerHTML = Math.round(eqMpg) + '<small> equiv. MPG</small>';
       el("ev-cpm").textContent = "$" + evCpm.toFixed(3);
-      el("blend-rate").textContent = "$" + rate.toFixed(3);
+      el("annual-cost").textContent = "$" + Math.round(evCpm * 12000) + "/yr";
 
       let v;
       if (eqMpg >= 55) v = `Excellent. Fueling this EV costs the same as running a <b>${Math.round(eqMpg)} MPG</b> gas car — well beyond any gas vehicle on the road.`;
