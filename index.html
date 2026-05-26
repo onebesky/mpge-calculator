@@ -576,9 +576,6 @@
     <header>
       <div class="eyebrow">MPGe is energy, not money</div>
       <h1>What does your <em>MPGe</em><br>really cost?</h1>
-      <p class="sub">A "<span id="sub-mpge">60</span> MPGe" sticker tells you nothing about your estimated spendings
-        since electricity and gas prices vary wildly by region and by where you charge. This tool finds the gas-car MPG
-        that would cost the same to fuel where you actually drive.</p>
     </header>
 
     <div class="panel">
@@ -900,7 +897,6 @@
       el("wh-mi").innerHTML = mpge > 0
         ? '→ <b>' + Math.round(ENERGY * 1000 / mpge) + '</b> <small> Wh/mi</small>'
         : '';
-      if (mpge > 0) el("sub-mpge").textContent = Math.round(mpge);
 
       if (mpge <= 0 || rate <= 0) return;
 
