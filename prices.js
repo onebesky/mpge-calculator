@@ -1,14 +1,14 @@
 // Price data — update this file periodically. Sources: EIA (electricity), AAA/EIA (gas), OpenEI URDB (TOU).
-// Last updated: 2026-06-08
+// Last updated: 2026-06-15
 window.PRICES = {
-  "updated": "2026-06-08",
-  "updatedGas": "2026-06-01",
+  "updated": "2026-06-15",
+  "updatedGas": "2026-06-08",
   "updatedElec": "2026-03",
   "updatedTou": "2026-05-24",
   "national": {
     "avgElec": 0.19,
     "touOffPeak": 0.09,
-    "avgGas": 4.31,
+    "avgGas": 4.15,
     "dcfc": 0.48
   },
   "states": {
@@ -16,7 +16,7 @@ window.PRICES = {
       "name": "California",
       "avgElec": 0.33,
       "touOffPeak": 0.2,
-      "avgGas": 5.85,
+      "avgGas": 5.7,
       "dcfc": 0.48,
       "touProgram": "PG&E EV2-A (~22¢ off-peak midnight–3 pm) / SCE TOU-D-PRIME (~25¢ off-peak 9 pm–4 pm) / SDG&E EV-TOU-5 (~12¢ super off-peak midnight–6 am). Shown rate is three-IOU average."
     },
@@ -24,7 +24,7 @@ window.PRICES = {
       "name": "Texas",
       "avgElec": 0.16,
       "touOffPeak": 0.03,
-      "avgGas": 3.75,
+      "avgGas": 3.56,
       "dcfc": 0.48,
       "touProgram": "TXU / Reliant / Green Mountain free-nights plans — energy charge $0 overnight (8–9 pm to 5–6 am); ~3¢/kWh reflects TDU delivery charges only"
     },
@@ -32,7 +32,7 @@ window.PRICES = {
       "name": "Florida",
       "avgElec": 0.15,
       "touOffPeak": 0.09,
-      "avgGas": 3.94,
+      "avgGas": 3.69,
       "dcfc": 0.48,
       "touProgram": "FPL TOU (RTU-1 rider) — off-peak ~9¢/kWh; on-peak Apr–Oct noon–9 pm weekdays"
     },
@@ -40,7 +40,7 @@ window.PRICES = {
       "name": "New York",
       "avgElec": 0.29,
       "touOffPeak": 0.05,
-      "avgGas": 4.39,
+      "avgGas": 4.28,
       "dcfc": 0.48,
       "touProgram": "Con Edison residential TOU — off-peak 5.2¢/kWh; on-peak 8 am–midnight weekdays"
     },
@@ -48,7 +48,7 @@ window.PRICES = {
       "name": "Pennsylvania",
       "avgElec": 0.21,
       "touOffPeak": 0.05,
-      "avgGas": 4.37,
+      "avgGas": 4.26,
       "dcfc": 0.48,
       "touProgram": "PECO TOU — super off-peak midnight–6 am ~5¢/kWh (generation + delivery)"
     },
@@ -56,7 +56,7 @@ window.PRICES = {
       "name": "Illinois",
       "avgElec": 0.19,
       "touOffPeak": 0.09,
-      "avgGas": 4.14,
+      "avgGas": 3.95,
       "dcfc": 0.48,
       "touProgram": "ComEd Hourly Real-Time Pricing — overnight typically 8–10¢/kWh (formal residential TOU launching 2026)"
     },
@@ -64,7 +64,7 @@ window.PRICES = {
       "name": "Ohio",
       "avgElec": 0.19,
       "touOffPeak": 0.07,
-      "avgGas": 4.3,
+      "avgGas": 4.02,
       "dcfc": 0.48,
       "touProgram": "AEP Ohio Plug-In EV Rate (separately metered) — super off-peak midnight–4 am ~2¢ distribution + ~5¢ supply; total ~7¢/kWh"
     },
@@ -72,7 +72,7 @@ window.PRICES = {
       "name": "Georgia",
       "avgElec": 0.15,
       "touOffPeak": 0.02,
-      "avgGas": 3.93,
+      "avgGas": 3.76,
       "dcfc": 0.48,
       "touProgram": "Georgia Power TOU-OA-14 (Overnight Advantage) — super off-peak 11 pm–7 am daily: 2.19¢/kWh (one of the lowest rates in the US)"
     },
@@ -80,7 +80,7 @@ window.PRICES = {
       "name": "North Carolina",
       "avgElec": 0.16,
       "touOffPeak": 0.08,
-      "avgGas": 3.93,
+      "avgGas": 3.76,
       "dcfc": 0.48,
       "touProgram": "Duke Energy Progress / Carolinas R-TOUD — off-peak nights/weekends ~8¢/kWh"
     },
@@ -88,7 +88,7 @@ window.PRICES = {
       "name": "Michigan",
       "avgElec": 0.21,
       "touOffPeak": 0.1,
-      "avgGas": 4.14,
+      "avgGas": 3.95,
       "dcfc": 0.48,
       "touProgram": "DTE Energy Overnight Savers (D1.13) — super off-peak 1–7 am ~10¢/kWh"
     },
@@ -96,7 +96,7 @@ window.PRICES = {
       "name": "New Jersey",
       "avgElec": 0.23,
       "touOffPeak": 0.21,
-      "avgGas": 4.37,
+      "avgGas": 4.26,
       "dcfc": 0.48,
       "touProgram": "PSE&G RS-TOU-3P — off-peak (all hours except weekday 4–9 pm) ~21¢/kWh; NJ rates are high even off-peak"
     },
@@ -104,7 +104,7 @@ window.PRICES = {
       "name": "Virginia",
       "avgElec": 0.17,
       "touOffPeak": 0.13,
-      "avgGas": 3.93,
+      "avgGas": 3.76,
       "dcfc": 0.48,
       "touProgram": "Dominion Energy Virginia Off-Peak Plan — super off-peak midnight–5 am: 12.5¢ summer / 14.1¢ winter"
     },
@@ -112,7 +112,7 @@ window.PRICES = {
       "name": "Washington",
       "avgElec": 0.14,
       "touOffPeak": 0.09,
-      "avgGas": 5.52,
+      "avgGas": 5.44,
       "dcfc": 0.48,
       "touProgram": "Puget Sound Energy Schedule 307/327 — off-peak 9 pm–7 am weekdays ~9¢/kWh"
     },
@@ -120,7 +120,7 @@ window.PRICES = {
       "name": "Arizona",
       "avgElec": 0.16,
       "touOffPeak": 0.11,
-      "avgGas": 5.08,
+      "avgGas": 4.96,
       "dcfc": 0.48,
       "touProgram": "APS Saver Choice Plus — off-peak ~12¢ summer / ~10¢ winter (all hours except weekday 3–7 pm)"
     },
@@ -128,7 +128,7 @@ window.PRICES = {
       "name": "Massachusetts",
       "avgElec": 0.3,
       "touOffPeak": 0.1,
-      "avgGas": 4.34,
+      "avgGas": 4.2,
       "dcfc": 0.48,
       "touProgram": "National Grid MA SC-1 VTOU / Eversource — off-peak (9 pm–1 pm next day) ~10¢/kWh delivery+supply"
     },
@@ -136,7 +136,7 @@ window.PRICES = {
       "name": "Colorado",
       "avgElec": 0.17,
       "touOffPeak": 0.07,
-      "avgGas": 4.2,
+      "avgGas": 3.99,
       "dcfc": 0.48,
       "touProgram": "Xcel Energy TOU (eff. Nov 2025) — off-peak ~7¢/kWh (peak only weekday 5–9 pm)"
     },
@@ -144,7 +144,7 @@ window.PRICES = {
       "name": "Oregon",
       "avgElec": 0.15,
       "touOffPeak": 0.09,
-      "avgGas": 5.08,
+      "avgGas": 4.96,
       "dcfc": 0.48,
       "touProgram": "Portland General Electric Time of Day — off-peak 9 pm–7 am weekdays: 9¢/kWh"
     },
@@ -152,7 +152,7 @@ window.PRICES = {
       "name": "Tennessee",
       "avgElec": 0.15,
       "touOffPeak": 0.07,
-      "avgGas": 4.14,
+      "avgGas": 3.95,
       "dcfc": 0.48,
       "touProgram": "TVA / MTE NiteFlex — off-peak 10 pm–4 am ~7¢/kWh (Memphis LGW off-peak ~5¢)"
     },
@@ -160,7 +160,7 @@ window.PRICES = {
       "name": "Indiana",
       "avgElec": 0.18,
       "touOffPeak": 0.07,
-      "avgGas": 4.14,
+      "avgGas": 3.95,
       "dcfc": 0.48,
       "touProgram": "Duke Energy Indiana TOU — discount period 10 pm–4 am ~7¢/kWh"
     },
@@ -168,7 +168,7 @@ window.PRICES = {
       "name": "Missouri",
       "avgElec": 0.13,
       "touOffPeak": 0.07,
-      "avgGas": 4.14,
+      "avgGas": 3.95,
       "dcfc": 0.48,
       "touProgram": "Ameren Missouri Overnight Savers — 10 pm–6 am: 7.3¢ summer / 6.3¢ winter"
     },
@@ -176,7 +176,7 @@ window.PRICES = {
       "name": "Maryland",
       "avgElec": 0.36,
       "touOffPeak": 0.1,
-      "avgGas": 4.37,
+      "avgGas": 4.26,
       "dcfc": 0.48,
       "touProgram": "BGE Schedule EV (EVsmart TOU) — off-peak ~10.5¢/kWh (all hours except 10 am–8 pm summer weekdays)"
     },
@@ -184,7 +184,7 @@ window.PRICES = {
       "name": "Wisconsin",
       "avgElec": 0.19,
       "touOffPeak": 0.1,
-      "avgGas": 4.14,
+      "avgGas": 3.95,
       "dcfc": 0.48,
       "touProgram": "We Energies Rg-2 TOU — off-peak 10¢/kWh confirmed"
     },
@@ -192,7 +192,7 @@ window.PRICES = {
       "name": "Minnesota",
       "avgElec": 0.15,
       "touOffPeak": 0.04,
-      "avgGas": 4.11,
+      "avgGas": 3.93,
       "dcfc": 0.48,
       "touProgram": "Xcel Energy EV Accelerate at Home — midnight–6 am: 3.8¢/kWh (separately metered EV circuit)"
     },
@@ -200,7 +200,7 @@ window.PRICES = {
       "name": "South Carolina",
       "avgElec": 0.16,
       "touOffPeak": 0.09,
-      "avgGas": 3.93,
+      "avgGas": 3.76,
       "dcfc": 0.48,
       "touProgram": "Duke Energy Progress / Dominion SC — off-peak nights/weekends ~9¢/kWh"
     },
@@ -208,7 +208,7 @@ window.PRICES = {
       "name": "Alabama",
       "avgElec": 0.17,
       "touOffPeak": 0.1,
-      "avgGas": 3.8,
+      "avgGas": 3.64,
       "dcfc": 0.48,
       "touProgram": "Alabama Power Rate RTA (Time Advantage) — economy off-peak hours: 10.3¢/kWh; PEV rider adds overnight discount 9 pm–5 am"
     },
@@ -216,7 +216,7 @@ window.PRICES = {
       "name": "Louisiana",
       "avgElec": 0.14,
       "touOffPeak": 0.11,
-      "avgGas": 3.8,
+      "avgGas": 3.64,
       "dcfc": 0.48,
       "touProgram": "Entergy Louisiana — no residential TOU plan available; flat residential rate ~11¢/kWh applies to overnight charging"
     },
@@ -224,7 +224,7 @@ window.PRICES = {
       "name": "Kentucky",
       "avgElec": 0.15,
       "touOffPeak": 0.08,
-      "avgGas": 4.14,
+      "avgGas": 3.95,
       "dcfc": 0.48,
       "touProgram": "LG&E (~9.2¢) / KU (~7.6¢) Time-of-Day — off-peak 10 pm–6 am weekdays, all weekends"
     },
@@ -232,7 +232,7 @@ window.PRICES = {
       "name": "Oklahoma",
       "avgElec": 0.14,
       "touOffPeak": 0.03,
-      "avgGas": 4.14,
+      "avgGas": 3.95,
       "dcfc": 0.48,
       "touProgram": "OG&E SmartHours Overnight — 11 pm–6 am: 2.7¢/kWh; PSO RSPEV: 3¢/kWh overnight"
     },
@@ -240,7 +240,7 @@ window.PRICES = {
       "name": "Connecticut",
       "avgElec": 0.3,
       "touOffPeak": 0.08,
-      "avgGas": 4.36,
+      "avgGas": 4.24,
       "dcfc": 0.48,
       "touProgram": "Eversource Rate 7 / VPP — off-peak 8 pm–noon weekdays: 8.1¢/kWh (deeply discounted vs 30¢ average)"
     },
@@ -248,7 +248,7 @@ window.PRICES = {
       "name": "Nevada",
       "avgElec": 0.14,
       "touOffPeak": 0.07,
-      "avgGas": 5.08,
+      "avgGas": 4.96,
       "dcfc": 0.48,
       "touProgram": "NV Energy EVRR (EV Recharge Rider) — overnight ~10 pm–7 am: ~7¢/kWh average (winter ~5¢, summer higher)"
     }
